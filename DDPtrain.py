@@ -32,16 +32,11 @@ def same_seeds(seed):
 same_seeds(0)
 
 
-# In[ ]:
-
 
 model = BertForQuestionAnswering.from_pretrained("bert-base-chinese")
 tokenizer = BertTokenizerFast.from_pretrained("bert-base-chinese")
 
 # You can safely ignore the warning message (it pops up because new prediction heads for QA are initialized randomly)
-
-
-# In[ ]:
 
 
 dist.init_process_group(backend='nccl', init_method='env://')
@@ -56,8 +51,6 @@ model = DDP(
     output_device=local_rank
     )
 
-
-# In[ ]:
 
 
 def read_data(file):
@@ -75,8 +68,6 @@ train_paragraphs_tokenized = tokenizer(train_paragraphs, add_special_tokens=Fals
 
 # You can safely ignore the warning message as tokenized sequences will be futher processed in datset __getitem__ before passing to model
 
-
-# In[ ]:
 
 
 class QA_Dataset(Dataset):
@@ -154,9 +145,6 @@ nw = 1
 train_loader = DataLoader(train_set, batch_size=train_batch_size, shuffle=False, pin_memory=True, num_workers=nw, sampler=train_sampler)
 
 
-# In[ ]:
-
-
 def evaluate(data, output):
     ##### TODO: Postprocessing #####
     # There is a bug and room for improvement in postprocessing 
@@ -187,9 +175,6 @@ def evaluate(data, output):
     return answer.replace(' ','')
 
 
-# In[ ]:
-
-
 num_epoch = 1 
 logging_step = 100
 learning_rate = 1e-4
@@ -197,7 +182,6 @@ optimizer = AdamW(model.parameters(), lr=learning_rate)
 
 
 model.train()
-#dist.barrier()
 print("Start Training ...")
 
 for epoch in range(num_epoch):
