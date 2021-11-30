@@ -174,6 +174,7 @@ def evaluate(data, output):
     # Remove spaces in answer (e.g. "大 金" --> "大金")
     return answer.replace(' ','')
 
+wandb.init(project='')
 
 num_epoch = 1 
 logging_step = 100
