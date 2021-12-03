@@ -14,6 +14,11 @@ from argparse import ArgumentParser
 from torch.utils.data import DataLoader, Dataset 
 from transformers import AdamW, BertForQuestionAnswering, BertTokenizerFast
 from tqdm.auto import tqdm
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--local_rank", type=int)
+args = parser.parse_args()
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -40,15 +45,14 @@ tokenizer = BertTokenizerFast.from_pretrained("bert-base-chinese")
 
 
 dist.init_process_group(backend='nccl', init_method='env://')
-local_rank = torch.distributed.get_rank()
-torch.cuda.set_device(local_rank)
-device = torch.device("cuda", local_rank)
+torch.cuda.set_device(args.local_rank)
+device = torch.device("cuda", args.local_rank)
 model = model.to(device)
 
 model = DDP(
     model,
-    device_ids=[local_rank],
-    output_device=local_rank
+    device_ids=[args.local_rank],
+    output_device=args.local_rank
     )
 
 
